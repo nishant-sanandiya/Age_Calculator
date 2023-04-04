@@ -1,32 +1,44 @@
 package com.example.first_app
 
 import android.app.DatePickerDialog
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
-import java.util.Calendar
+import androidx.appcompat.app.AppCompatActivity
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.math.floor
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        var bornDay: Int
-        var bornMonth: Int
-        var bornYear: Int
+        var bornDay: Int = 0
+        var bornMonth: Int = 0
+        var bornYear: Int = 0
 
         val btnDatePicker = findViewById<Button>(R.id.Select_Date_Button)
         val dateText = findViewById<TextView>(R.id.date)
         val resultText = findViewById<TextView>(R.id.result)
         val calculateButton = findViewById<Button>(R.id.Calculate_button)
 
+        fun calculateDate() {
+            if (bornDay != 0 && bornMonth != 0 && bornYear != 0) {
+                val sdf = SimpleDateFormat("dd/MM/yyyy")
+                val selectedDate =
+                    sdf.parse("${bornDay.toString()}/${bornMonth.toString()}/${bornYear.toString()}").time
+                val currentDate = Date().time;
+                val diffInDays = floor(((currentDate - selectedDate) / 86400000).toDouble()).toInt()
+                resultText.setText("You are ${diffInDays.toString()} days old.")
+            }
+        }
+
         fun setDate(year: Int, month: Int, dayOfMonth: Int) {
             Log.d("Date", "${year} ${month} ${dayOfMonth}")
             bornDay = dayOfMonth
-            bornMonth = month+1
+            bornMonth = month + 1
             bornYear = year
             dateText.setText("${bornDay}/${bornMonth}/${bornYear}")
         }
@@ -48,8 +60,14 @@ class MainActivity : AppCompatActivity() {
             ).show()
         }
 
+        calculateButton.setOnClickListener {
+            calculateDate()
+        }
+
         btnDatePicker.setOnClickListener {
             onDatePick()
         }
     }
+
+
 }
